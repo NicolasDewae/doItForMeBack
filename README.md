@@ -9,10 +9,12 @@
 
 
 ### Effectuer et executer les migrations 
-ouvrir la console:
+Dans SQL Server, créer une base de données nommée DoItForMeDatabase. si elle n'a pas ce nom il faudra changer le contenu de la ConnectionString dans le fichier appsettings.json
+
+Ouvrir la console:
 outils -> Gestionnaire de package NuGet -> Console du Gestionnaire de package
 
-Si besoin créer une migration tout en ajoutant un instantané de cette dernière.
+Si besoin, créer une migration tout en ajoutant un instantané de cette dernière. (Remplacer migrationName par le nom de votre choix)
 ```shell
 add-migration migrationName
 ```
@@ -21,7 +23,7 @@ Executer la migration pour créer ou mettre à jour le schéma de la base de don
 ```shell
 update-database
 ```
-ressources:
+Ressources:
 
 - [initialiser EF Core](https://dev.to/renukapatil/create-web-api-with-aspnet-core-60-46l4).
 - [Commenter son code avec .Net](https://vincentlaine.developpez.com/tuto/dotnet/comdoc/#LIII-B-1).
