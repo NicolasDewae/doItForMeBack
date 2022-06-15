@@ -1,4 +1,4 @@
-﻿using doItForMeBack.Models;
+﻿using doItForMeBack.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace doItForMeBack.Data

@@ -22,7 +22,7 @@ namespace doItForMeBack.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("doItForMeBack.Models.User", b =>
+            modelBuilder.Entity("doItForMeBack.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
