@@ -15,16 +15,17 @@ namespace doItForMeBack.Entities
         [Required]
         public string Email { get; set; }
         [Required]
-        [JsonIgnore]
         public string Password { get; set; }
         [Required]
-        public string adress { get; set; }
+        public string Role { get; set; }
+        [Required]
+        public string Adress { get; set; }
         [Required]
         public string PostCode { get; set; }
         [Required]
-        public string city { get; set; }
+        public string City { get; set; }
         [Required]
-        public string state { get; set; }
+        public string State { get; set; }
         [Required]
         public DateTime Birthday { get; set; }
         public string? PhoneNumber { get; set; }
