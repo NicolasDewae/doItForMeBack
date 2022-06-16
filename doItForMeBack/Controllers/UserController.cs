@@ -36,7 +36,7 @@ namespace doItForMeBack.Controllers
         /// Permet de récupérer tous les utilisateurs et leurs attributs
         /// </summary>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IQueryable GetUsers()
         {
