@@ -17,21 +17,6 @@ namespace doItForMeBack.Controllers
             _userService = userService;
         }
 
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate(AuthenticateRequest model)
-        {
-            var response = _userService.Authenticate(model);
-
-            if(response == null)
-            {
-                
-                return BadRequest(new { message = "Username or password is incorrect" });
-
-            }
-
-            return Ok(response);
-        }
-
         /// <summary>
         /// Permet de récupérer tous les utilisateurs et leurs attributs
         /// </summary>
@@ -54,7 +39,12 @@ namespace doItForMeBack.Controllers
             return _userService.GetUserById(id);
         }
 
-        [HttpPost]
+        /// <summary>
+        /// Permet de créer un utilisateur, sans restriction de role
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        [HttpPost("Registration")]
         public IActionResult CreateUser([FromBody] User user)
         {
             if (user == null)
