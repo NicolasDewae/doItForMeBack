@@ -1,5 +1,7 @@
-﻿using doItForMeBack.Models;
+﻿using doItForMeBack.Entities;
+using doItForMeBack.Models;
 using doItForMeBack.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,21 +16,58 @@ namespace doItForMeBack.Controllers
         {
             _userService = userService;
         }
+
         /// <summary>
         /// Permet de récupérer tous les utilisateurs et leurs attributs
         /// </summary>
         /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IQueryable GetUsers()
         {
             return _userService.GetUsers();
         }
+
         /// <summary>
-        /// Permet de créer un utilisateur
+        /// Permet de récupérer un utilisateur selon l'id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin")]
+        [HttpGet("id")]
+        public IActionResult GetUserById(int id) 
+        {
+            if(_userService.GetUserById(id) == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(_userService.GetUserById(id));
+        }
+
+        /// <summary>
+        /// Permet de récupérer les informations de l'utilisateur existant
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("currentUser")]
+        public IActionResult currentUser()
+        {
+            var currentUser = (User)HttpContext.Items["User"];
+
+            if(currentUser == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(currentUser);
+        }
+
+        /// <summary>
+        /// Permet de créer un utilisateur, sans restriction de role
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("Registration")]
         public IActionResult CreateUser([FromBody] User user)
         {
             if (user == null)

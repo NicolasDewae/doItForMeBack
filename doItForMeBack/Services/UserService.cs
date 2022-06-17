@@ -1,6 +1,7 @@
 ﻿using doItForMeBack.Data;
-using doItForMeBack.Models;
+using doItForMeBack.Entities;
 using doItForMeBack.Service;
+
 
 namespace doItForMeBack.Services
 {
@@ -12,6 +13,7 @@ namespace doItForMeBack.Services
         {
             _db = db;
         }
+
         /// <summary>
         /// Service qui ajoute un utilisateur en base de données
         /// </summary>
@@ -19,9 +21,12 @@ namespace doItForMeBack.Services
         /// <returns></returns>
         public bool CreateUser(User user)
         {
+            //user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
             _db.Users.Add(user);
             return Save();
         }
+
         /// <summary>
         /// Service qui récupère tous les utilisateurs
         /// </summary>
@@ -30,6 +35,17 @@ namespace doItForMeBack.Services
         {
             return _db.Users.AsQueryable();
         }
+
+        /// <summary>
+        /// Récupérer un utilisateur par son Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public User GetUserById(int id)
+        {
+            return _db.Users.FirstOrDefault(x => x.Id == id);
+        }
+
         /// <summary>
         /// Service qui vérifie en base de données si l'utilisateur existe
         /// </summary>
@@ -39,6 +55,7 @@ namespace doItForMeBack.Services
         {
             return _db.Users.Any(x => x.Id == id);
         }
+
         /// <summary>
         /// Service qui retourne 
         /// "true" si le changement est effectué en base de données

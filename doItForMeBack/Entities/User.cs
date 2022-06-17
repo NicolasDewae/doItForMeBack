@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
-namespace doItForMeBack.Models
+namespace doItForMeBack.Entities
 {
     public class User
     {
@@ -16,13 +17,15 @@ namespace doItForMeBack.Models
         [Required]
         public string Password { get; set; }
         [Required]
-        public string adress { get; set; }
+        public string Role { get; set; }
+        [Required]
+        public string Adress { get; set; }
         [Required]
         public string PostCode { get; set; }
         [Required]
-        public string city { get; set; }
+        public string City { get; set; }
         [Required]
-        public string state { get; set; }
+        public string State { get; set; }
         [Required]
         public DateTime Birthday { get; set; }
         public string? PhoneNumber { get; set; }
