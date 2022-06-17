@@ -27,16 +27,39 @@ namespace doItForMeBack.Controllers
         {
             return _userService.GetUsers();
         }
+
         /// <summary>
-        /// Permet de créer un utilisateur
+        /// Permet de récupérer un utilisateur selon l'id
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("id")]
-        public User GetUserById(int id) 
+        public IActionResult GetUserById(int id) 
         {
-            return _userService.GetUserById(id);
+            if(_userService.GetUserById(id) == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(_userService.GetUserById(id));
+        }
+
+        /// <summary>
+        /// Permet de récupérer les informations de l'utilisateur existant
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("currentUser")]
+        public IActionResult currentUser()
+        {
+            var currentUser = (User)HttpContext.Items["User"];
+
+            if(currentUser == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(currentUser);
         }
 
         /// <summary>
