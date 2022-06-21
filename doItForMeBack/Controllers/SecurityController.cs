@@ -38,6 +38,29 @@ namespace doItForMeBack.Controllers
             return Ok(response);
         }
 
-
+        /// <summary>
+        /// Permet de créer un utilisateur, sans restriction de role
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        [HttpPost("Registration")]
+        public IActionResult CreateUser([FromBody] User user)
+        {
+            if (user == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if (_userService.UserExists(user.Id))
+            {
+                ModelState.AddModelError("", "User already exist");
+                return StatusCode(500, ModelState);
+            }
+            if (!_userService.CreateUser(user))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving user");
+                return StatusCode(500, ModelState);
+            }
+            return Ok(user);
+        }
     }
 }
