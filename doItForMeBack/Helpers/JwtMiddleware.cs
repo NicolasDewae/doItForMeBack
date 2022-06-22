@@ -17,6 +17,12 @@ namespace doItForMeBack.Helpers
             _appSettings = appSettings.Value;
         }
 
+        /// <summary>
+        /// Vérifie s'il y a un token pour appeler la méthode attachUserToContext
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="userService"></param>
+        /// <returns></returns>
         public async Task Invoke(HttpContext context, IUserService userService)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(' ').Last();
@@ -29,6 +35,12 @@ namespace doItForMeBack.Helpers
             await _next(context);
         }
 
+        /// <summary>
+        /// ajoute l'id de l'utilisateur connecté au HttpContext pour qu'il puisse être récupéré par la suite
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="userService"></param>
+        /// <param name="token"></param>
         private void attachUserToContext(HttpContext context, IUserService userService, string token)
         {
             try
@@ -51,7 +63,7 @@ namespace doItForMeBack.Helpers
             }
             catch
             {
-
+                //Ne fait rien si la validation n'est pas correcte
             }
         }
     }
