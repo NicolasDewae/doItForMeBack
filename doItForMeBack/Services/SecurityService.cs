@@ -27,7 +27,7 @@ namespace doItForMeBack.Services
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public AuthenticateResponse login(AuthenticateRequest model)
+        public AuthenticateResponse Login(AuthenticateRequest model)
         {
             var user = _db.Users.SingleOrDefault(x => x.Email == model.Email && x.Password == model.Password);
 

@@ -5,6 +5,7 @@ namespace doItForMeBack.Services;
 
 public interface ISecurityService
 {
-    AuthenticateResponse login(AuthenticateRequest model);
+    AuthenticateResponse Login(AuthenticateRequest model);
+    string GenerateJwtToken(User user);
 }
 

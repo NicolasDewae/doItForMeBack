@@ -24,9 +24,9 @@ namespace doItForMeBack.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost("login")]
-        public IActionResult login(AuthenticateRequest model)
+        public IActionResult Login(AuthenticateRequest model)
         {
-            var response = _securityService.login(model);
+            var response = _securityService.Login(model);
 
             if (response == null)
             {
