@@ -21,10 +21,29 @@ namespace doItForMeBack.Services
         /// <returns></returns>
         public bool CreateUser(User user)
         {
-            //user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
             _db.Users.Add(user);
             return Save();
+        }
+
+        /// <summary>
+        /// Encrypt le nouveau mot de passe et l'insert en base de données
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="oldPassword"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
+        public bool UpdatePassword(int userId, string oldPassword, string newPassword)
+        {
+            var user = GetUserById(userId);
+
+            user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+
+            _db.Users.Update(user);
+
+            return Save();
+
         }
 
         /// <summary>
