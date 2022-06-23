@@ -29,9 +29,9 @@ namespace doItForMeBack.Services
         /// <returns></returns>
         public AuthenticateResponse Login(AuthenticateRequest model)
         {
-            var user = _db.Users.SingleOrDefault(x => x.Email == model.Email && x.Password == model.Password);
+            var user = _db.Users.SingleOrDefault(x => x.Email == model.Email);
 
-            if (user == null /*|| !BCrypt.Net.BCrypt.Verify(model.Password, user.Password)*/)
+            if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
             {
                 return null;
             }

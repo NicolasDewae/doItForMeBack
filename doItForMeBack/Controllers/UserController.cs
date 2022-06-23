@@ -36,6 +36,27 @@ namespace doItForMeBack.Controllers
 
             return Ok(currentUser);
         }
+
+        /// <summary>
+        /// Vérifie si l'ancien mot de passe est correct, si le nouveau mot de passe est saisi et si oui, il appelle le service UpdatePassword
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut("updatePassword")]
+        [Authorize(Roles = "Admin, User")]
+        public IActionResult UpdatePassword(string oldPassword, string newPassword, string confirmNewPassword)
+        {
+            var currentUser = (User)HttpContext.Items["User"];
+
+            if(currentUser == null || !BCrypt.Net.BCrypt.Verify(oldPassword, currentUser.Password) || newPassword == null || newPassword != confirmNewPassword)
+            {
+                return BadRequest();
+            }
+
+            _userService.UpdatePassword(currentUser.Id, oldPassword, newPassword);
+
+            return Ok(new { message = "Votre mot de passe a été changé" });
+        }
+
         #endregion
 
         #region admin
