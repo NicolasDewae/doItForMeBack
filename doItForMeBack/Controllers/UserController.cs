@@ -20,10 +20,10 @@ namespace doItForMeBack.Controllers
         #region User
         
         /// <summary>
-        /// Permet de récupérer les informations de l'utilisateur existant
+        /// Permet de récupérer les informations de l'utilisateur courant
         /// </summary>
         /// <returns></returns>
-        [HttpGet("currentUser")]
+        [HttpGet("GetCurrentUser")]
         [Authorize(Roles = "Admin, User")]
         public IActionResult currentUser()
         {
@@ -35,6 +35,38 @@ namespace doItForMeBack.Controllers
             }
 
             return Ok(currentUser);
+        }
+
+        /// <summary>
+        /// Modifier les coordonnées de l'utilisateur courant.
+        /// la modification exclu: le mot de passe et le role
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        [HttpPut("UpdateCurrentUser")]
+        [Authorize(Roles = "Admin, User")]
+        public IActionResult UpdateCurrentUser(User user)
+        {
+            var currentUser = (User)HttpContext.Items["User"];
+
+            if (currentUser == null || currentUser.Id != user.Id)
+            {
+                return BadRequest();
+            }
+
+            //Seul les données dans cette liste pourrons être changées
+            currentUser.Firstname = user.Firstname;
+            currentUser.Lastname = user.Lastname;
+            currentUser.Email = user.Email;
+            currentUser.Adress = user.Adress;
+            currentUser.PostCode = user.PostCode;
+            currentUser.City = user.City;
+            currentUser.State = user.State;
+            currentUser.Birthday = user.Birthday;
+
+            _userService.UpdateUser(currentUser);
+
+            return Ok();
         }
 
         /// <summary>
@@ -57,6 +89,22 @@ namespace doItForMeBack.Controllers
             return Ok(new { message = "Votre mot de passe a été changé" });
         }
 
+        [HttpDelete("deleteCurrentUser")]
+        [Authorize(Roles = "Admin, User")]
+        public IActionResult DeleteCurrentUser(int userId)
+        {
+            var currentUser = (User)HttpContext.Items["User"];
+
+            if (currentUser == null || currentUser.Id != userId)
+            {
+                return BadRequest();
+            }
+
+            _userService.DeleteUser(currentUser);
+
+            return Ok();
+        }
+
         #endregion
 
         #region admin
@@ -70,9 +118,9 @@ namespace doItForMeBack.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult GetUserById(int id)
         {
-            if (_userService.GetUserById(id) == null)
+            if (!_userService.UserExists(id))
             {
-                return BadRequest();
+                return BadRequest(new { message = "L'utilisateur n'existe pas" });
             }
 
             return Ok(_userService.GetUserById(id));
@@ -87,6 +135,55 @@ namespace doItForMeBack.Controllers
         public IQueryable GetUsers()
         {
             return _userService.GetUsers();
+        }
+
+        /// <summary>
+        /// Modifier les coordonnées de , n'importe quel utilisateur.
+        /// la modification exclu: le mot de passe
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        [HttpPut("UpdateUser")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult UpdateUser(User user)
+        {
+            var userToUpdate = _userService.GetUserById(user.Id);
+
+            if (user == null || user.Id != userToUpdate.Id)
+            {
+                return BadRequest();
+            }
+
+            //Seul les données dans cette liste pourrons être changées
+            userToUpdate.Firstname = user.Firstname;
+            userToUpdate.Lastname = user.Lastname;
+            userToUpdate.Email = user.Email;
+            userToUpdate.Role = user.Role;
+            userToUpdate.Adress = user.Adress;
+            userToUpdate.PostCode = user.PostCode;
+            userToUpdate.City = user.City;
+            userToUpdate.State = user.State;
+            userToUpdate.Birthday = user.Birthday;
+
+            _userService.UpdateUser(userToUpdate);
+
+            return Ok();
+        }
+
+        [HttpDelete("deleteUser")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult DeleteUser(int userId)
+        {
+            var user = _userService.GetUserById(userId);
+
+            if (user == null || user.Role == "Admin")
+            {
+                return BadRequest(new { message = "L'utilisateur n'existe pas ou vous n'avez pas l'autorisation de le supprimer" });
+            }
+
+            
+
+            return Ok(_userService.DeleteUser(user));
         }
 
         #endregion
