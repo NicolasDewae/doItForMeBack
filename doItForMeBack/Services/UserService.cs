@@ -47,6 +47,17 @@ namespace doItForMeBack.Services
         }
 
         /// <summary>
+        /// Supprimer un utilisateur
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public bool UpdateUser(User user)
+        {
+            _db.Users.Update(user);
+            return Save();
+        }
+
+        /// <summary>
         /// Service qui récupère tous les utilisateurs
         /// </summary>
         /// <returns></returns>
@@ -84,6 +95,12 @@ namespace doItForMeBack.Services
         public bool Save()
         {
             return _db.SaveChanges() >= 0 ? true : false;
+        }
+
+        public bool DeleteUser(User user)
+        {
+            _db.Users.Remove(user);
+            return Save();
         }
     }
 }

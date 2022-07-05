@@ -18,21 +18,21 @@ namespace doItForMeBack.Controllers
             _userService = userService;
         }
 
+        #region post
+
         /// <summary>
         /// Fonction de connexion
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public IActionResult Login(AuthenticateRequest model)
         {
             var response = _securityService.Login(model);
 
             if (response == null)
             {
-
                 return BadRequest(new { message = "Username or password is incorrect" });
-
             }
 
             return Ok(response);
@@ -62,5 +62,7 @@ namespace doItForMeBack.Controllers
             }
             return Ok(user);
         }
+
+        #endregion
     }
 }

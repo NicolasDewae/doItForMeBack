@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace doItForMeBack.Controllers
 {
+    [Authorize(Roles = "Admin, User")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -17,14 +18,13 @@ namespace doItForMeBack.Controllers
             _userService = userService;
         }
 
-        #region User
-        
+        #region get
+
         /// <summary>
-        /// Permet de récupérer les informations de l'utilisateur existant
+        /// Permet de récupérer les informations de l'utilisateur courant
         /// </summary>
         /// <returns></returns>
-        [HttpGet("currentUser")]
-        [Authorize(Roles = "Admin, User")]
+        [HttpGet("GetCurrentUser")]
         public IActionResult currentUser()
         {
             var currentUser = (User)HttpContext.Items["User"];
@@ -37,12 +37,46 @@ namespace doItForMeBack.Controllers
             return Ok(currentUser);
         }
 
+        #endregion
+
+        #region update
+
+        /// <summary>
+        /// Modifier les coordonnées de l'utilisateur courant.
+        /// la modification exclu: le mot de passe et le role
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        [HttpPut("UpdateCurrentUser")]
+        public IActionResult UpdateCurrentUser(User user)
+        {
+            var currentUser = (User)HttpContext.Items["User"];
+
+            if (currentUser == null || currentUser.Id != user.Id)
+            {
+                return BadRequest();
+            }
+
+            //Seul les données dans cette liste pourrons être changées
+            currentUser.Firstname = user.Firstname;
+            currentUser.Lastname = user.Lastname;
+            currentUser.Email = user.Email;
+            currentUser.Adress = user.Adress;
+            currentUser.PostCode = user.PostCode;
+            currentUser.City = user.City;
+            currentUser.State = user.State;
+            currentUser.Birthday = user.Birthday;
+
+            _userService.UpdateUser(currentUser);
+
+            return Ok();
+        }
+
         /// <summary>
         /// Vérifie si l'ancien mot de passe est correct, si le nouveau mot de passe est saisi et si oui, il appelle le service UpdatePassword
         /// </summary>
         /// <returns></returns>
-        [HttpPut("updatePassword")]
-        [Authorize(Roles = "Admin, User")]
+        [HttpPut("UpdatePassword")]
         public IActionResult UpdatePassword(string oldPassword, string newPassword, string confirmNewPassword)
         {
             var currentUser = (User)HttpContext.Items["User"];
@@ -59,34 +93,26 @@ namespace doItForMeBack.Controllers
 
         #endregion
 
-        #region admin
+        #region delete
 
         /// <summary>
-        /// Permet de récupérer un utilisateur selon l'id
+        /// Supprimer le compte de l'utilisateur courant
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        [HttpGet("GetUserById")]
-        [Authorize(Roles = "Admin")]
-        public IActionResult GetUserById(int id)
+        [HttpDelete("DeleteAccount")]
+        public IActionResult DeleteCurrentUser(int userId)
         {
-            if (_userService.GetUserById(id) == null)
+            var currentUser = (User)HttpContext.Items["User"];
+
+            if (currentUser == null || currentUser.Id != userId)
             {
                 return BadRequest();
             }
 
-            return Ok(_userService.GetUserById(id));
-        }
+            _userService.DeleteUser(currentUser);
 
-        /// <summary>
-        /// Permet de récupérer tous les utilisateurs et leurs attributs
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("GetUsers")]
-        [Authorize(Roles = "Admin")]
-        public IQueryable GetUsers()
-        {
-            return _userService.GetUsers();
+            return Ok();
         }
 
         #endregion
