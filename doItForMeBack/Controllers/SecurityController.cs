@@ -18,12 +18,14 @@ namespace doItForMeBack.Controllers
             _userService = userService;
         }
 
+        #region post
+
         /// <summary>
         /// Fonction de connexion
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public IActionResult Login(AuthenticateRequest model)
         {
             var response = _securityService.Login(model);
@@ -60,5 +62,7 @@ namespace doItForMeBack.Controllers
             }
             return Ok(user);
         }
+
+        #endregion
     }
 }
