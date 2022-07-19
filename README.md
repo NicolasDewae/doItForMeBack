@@ -1,16 +1,23 @@
 # doItForMeBack
 ## Etapes pour installation:
+### Paramétrez la chaine de connection
+Dans MySQL, créez une base de données nommée DoItForMeDatabase. <br>
+Au sein du projet, allez dans appsettings.json et personnalisez la phrase de "ConnectionStrings" avec votre propre user et password 
 
 ### Effectuer et executer les migrations 
-Dans MySQL, créer une base de données nommée DoItForMeDatabase. si elle n'a pas ce nom il faudra changer le contenu de la ConnectionString dans le fichier appsettings.json
 
 Ouvrir la console:
 outils -> Gestionnaire de package NuGet -> Console du Gestionnaire de package
 
-Executer la migration pour créer ou mettre à jour le schéma de la base de données.
+Executez la migration pour créer ou mettre à jour le schéma de la base de données.
 ```shell
 update-database
 ```
+
+### Céer votre premier utilisateur
+Lancer le projet.<br>
+Dans swagger utilisez la méthode "Registration" située dans la section Security pour créer un admin. Renseignez les champs obligatoires et dans rôle, notez bien "Admin" commençant par une majuscule.
+
 Ressources:
 
 - [initialiser EF Core](https://dev.to/renukapatil/create-web-api-with-aspnet-core-60-46l4).
