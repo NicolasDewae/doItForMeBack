@@ -1,8 +1,6 @@
 ﻿using doItForMeBack.Entities;
-using doItForMeBack.Migrations;
 using doItForMeBack.Service;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace doItForMeBack.Controllers
