@@ -2,7 +2,7 @@
 ## Etapes pour installation:
 
 ### Effectuer et executer les migrations 
-Dans SQL Server, créer une base de données nommée DoItForMeDatabase. si elle n'a pas ce nom il faudra changer le contenu de la ConnectionString dans le fichier appsettings.json
+Dans MySQL, créer une base de données nommée DoItForMeDatabase. si elle n'a pas ce nom il faudra changer le contenu de la ConnectionString dans le fichier appsettings.json
 
 Ouvrir la console:
 outils -> Gestionnaire de package NuGet -> Console du Gestionnaire de package
