@@ -68,10 +68,12 @@ builder.Services.AddAuthentication(options => {
         });
 // La méthode "UseSqlServer" récupère la chaine de connexion pour se connecter à la base de données
 var connectionString = builder.Configuration.GetConnectionString("DoItForMeDatabase");
-builder.Services.AddDbContext<DataContext>(o =>
+
+builder.Services.AddDbContext<DataContext>(options =>
 {
-    o.UseSqlServer(connectionString);
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
+
 var app = builder.Build();
 
 {
