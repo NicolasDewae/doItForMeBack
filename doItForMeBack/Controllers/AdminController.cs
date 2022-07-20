@@ -74,6 +74,7 @@ namespace doItForMeBack.Controllers
             userToUpdate.City = user.City;
             userToUpdate.State = user.State;
             userToUpdate.Birthday = user.Birthday;
+            userToUpdate.Ban = user.Ban;
 
             _userService.UpdateUser(userToUpdate);
 
