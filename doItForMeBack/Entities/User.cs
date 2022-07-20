@@ -29,8 +29,11 @@ namespace doItForMeBack.Entities
         [Required]
         public DateTime Birthday { get; set; }
         public string? PhoneNumber { get; set; }
-        public string? Rate { get; set; }
         public string? Picture { get; set; }
+        public List<Rate>? Rate { get; set; }
+        [Required]
+        public Ban Ban { get; set; }
+        public List<Mission> Mission { get; set; }
         #endregion
     }
 }
