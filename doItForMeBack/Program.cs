@@ -1,7 +1,7 @@
 using doItForMeBack.Data;
 using doItForMeBack.Helpers;
-using doItForMeBack.Service;
-using doItForMeBack.Services;
+using doItForMeBack.Services.Interfaces;
+using doItForMeBack.Services.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -16,6 +16,7 @@ builder.Services.AddControllers();
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISecurityService, SecurityService>();
+builder.Services.AddScoped<IMissionService, MissionService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
