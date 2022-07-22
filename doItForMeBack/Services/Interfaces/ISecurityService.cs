@@ -1,7 +1,7 @@
 ﻿using doItForMeBack.Entities;
 using doItForMeBack.Models;
 
-namespace doItForMeBack.Services;
+namespace doItForMeBack.Services.Interfaces;
 
 public interface ISecurityService
 {

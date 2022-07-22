@@ -1,11 +1,11 @@
 ﻿using doItForMeBack.Data;
 using doItForMeBack.Entities;
-using doItForMeBack.Service;
+using doItForMeBack.Services.Interfaces;
 
 
-namespace doItForMeBack.Services
+namespace doItForMeBack.Services.Services
 {
-    public class UserService: IUserService
+    public class UserService : IUserService
     {
         private readonly DataContext _db;
 
