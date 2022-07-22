@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using doItForMeBack.Data;
 
@@ -10,9 +11,10 @@ using doItForMeBack.Data;
 namespace doItForMeBack.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220721122306_database")]
+    partial class database
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,6 +70,7 @@ namespace doItForMeBack.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Picture")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<float>("Price")
@@ -83,6 +86,8 @@ namespace doItForMeBack.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BanId");
+
+                    b.HasIndex("ClaimantId");
 
                     b.HasIndex("MakerId");
 
@@ -215,11 +220,19 @@ namespace doItForMeBack.Migrations
                         .WithMany()
                         .HasForeignKey("BanId");
 
+                    b.HasOne("doItForMeBack.Entities.User", "Claimant")
+                        .WithMany()
+                        .HasForeignKey("ClaimantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("doItForMeBack.Entities.User", "Maker")
                         .WithMany("Mission")
                         .HasForeignKey("MakerId");
 
                     b.Navigation("Ban");
+
+                    b.Navigation("Claimant");
 
                     b.Navigation("Maker");
                 });
