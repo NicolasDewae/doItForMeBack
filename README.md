@@ -6,7 +6,7 @@ Au sein du projet, allez dans appsettings.json et personnalisez la phrase de "Co
 
 ### Effectuer et executer les migrations (Windows)
 
-Ouvrir la console:
+Ouvrir la console:<br>
 outils -> Gestionnaire de package NuGet -> Console du Gestionnaire de package
 
 Créer une migration (si nécessaire)
@@ -21,7 +21,6 @@ update-database
 
 ### Effectuer et executer les migrations (Mac)
 
-Ouvrir la console:
 Gérer les packages NuGet -> Installer Core Entity Framework
 
 Créer une migration (si nécessaire)
