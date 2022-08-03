@@ -4,19 +4,58 @@
 Dans MySQL, créez une base de données nommée DoItForMeDatabase. <br>
 Au sein du projet, allez dans appsettings.json et personnalisez la phrase de "ConnectionStrings" avec votre propre user et password 
 
-### Effectuer et executer les migrations 
+### Effectuer et executer les migrations (Windows)
 
 Ouvrir la console:
 outils -> Gestionnaire de package NuGet -> Console du Gestionnaire de package
+
+Créer une migration (si nécessaire)
+```shell
+add-migration nomDeLaMigration
+```
 
 Executez la migration pour créer ou mettre à jour le schéma de la base de données.
 ```shell
 update-database
 ```
 
+### Effectuer et executer les migrations (Mac)
+
+Ouvrir la console:
+Gérer les packages NuGet -> Installer Core Entity Framework
+
+Créer une migration (si nécessaire)
+```shell
+dotnet ef migrations add nomDeLaMigration
+```
+
+Executez la migration pour créer ou mettre à jour le schéma de la base de données.
+```shell
+dotnet ef update database
+```
+
 ### Céer votre premier utilisateur
 Lancer le projet.<br>
-Dans swagger utilisez la méthode "Registration" située dans la section Security pour créer un admin. Renseignez les champs obligatoires et dans rôle, notez bien "Admin" commençant par une majuscule.
+Dans swagger utilisez la méthode "Registration" située dans la section Security pour créer un admin. Renseignez les champs obligatoires et dans rôle, notez bien "Admin" commençant par une majuscule. Ci-dessous le json avec les informations minimales à renseigner:
+
+```json
+{
+  "fistname": "string",
+  "lastname": "string",
+  "email": "string",
+  "password": "string",
+  "role": "Admin",
+  "adress": "string",
+  "postCode": "string",
+  "city": "string",
+  "state": "string",
+  "birthday": "2022-01-01",
+  "ban": {
+    "id": 1,
+    "isBan": false
+  }
+}
+```
 
 Ressources:
 
