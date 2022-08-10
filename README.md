@@ -39,7 +39,7 @@ Dans swagger utilisez la méthode "Registration" située dans la section Securit
 
 ```json
 {
-  "fistname": "string",
+  "firstname": "string",
   "lastname": "string",
   "email": "string",
   "password": "string",
