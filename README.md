@@ -50,7 +50,6 @@ Dans swagger utilisez la méthode "Registration" située dans la section Securit
   "state": "string",
   "birthday": "2022-01-01",
   "ban": {
-    "id": 1,
     "isBan": false
   }
 }
