@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace doItForMeBack.Entities
 {
@@ -31,9 +30,8 @@ namespace doItForMeBack.Entities
         public string? PhoneNumber { get; set; }
         public string? Picture { get; set; }
         public List<Rate>? Rate { get; set; }
-        [Required]
-        public Ban Ban { get; set; }
-        public List<Mission> Mission { get; set; }
+        public Ban? Ban { get; set; }
+        public List<Mission>? Mission { get; set; }
         #endregion
     }
 }

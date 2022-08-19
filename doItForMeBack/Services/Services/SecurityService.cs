@@ -2,15 +2,16 @@
 using doItForMeBack.Entities;
 using doItForMeBack.Helpers;
 using doItForMeBack.Models;
+using doItForMeBack.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace doItForMeBack.Services
+namespace doItForMeBack.Services.Services
 {
-    public class SecurityService: ISecurityService
+    public class SecurityService : ISecurityService
     {
         private readonly AppSettings _appSettings;
         private readonly DataContext _db;

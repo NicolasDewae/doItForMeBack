@@ -1,7 +1,6 @@
 ﻿using doItForMeBack.Entities;
-using doItForMeBack.Models;
 
-namespace doItForMeBack.Service;
+namespace doItForMeBack.Services.Interfaces;
 
 public interface IUserService
 {
