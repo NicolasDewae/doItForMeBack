@@ -1,7 +1,6 @@
 ﻿using doItForMeBack.Entities;
 using doItForMeBack.Models;
-using doItForMeBack.Service;
-using doItForMeBack.Services;
+using doItForMeBack.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace doItForMeBack.Controllers
@@ -34,14 +33,6 @@ namespace doItForMeBack.Controllers
             if (response == null)
             {
                 return BadRequest(new { message = "Username or password is incorrect" });
-            }
-
-            // Vérifier si l'utilisateur est banni
-            var user = _userService.GetUserById(response.Id);
-
-            if (user.Ban.IsBan == true)
-            {
-                return BadRequest(new { message = "L'accès vous est refusé, rapprochez vous d'un administrateur pour en savoir plus" });
             }
 
             return Ok(response);

@@ -1,6 +1,6 @@
 ﻿using doItForMeBack.Entities;
 using doItForMeBack.Models;
-using doItForMeBack.Service;
+using doItForMeBack.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +25,7 @@ namespace doItForMeBack.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetCurrentUser")]
-        public IActionResult currentUser()
+        public IActionResult CurrentUser()
         {
             var currentUser = (User)HttpContext.Items["User"];
 
