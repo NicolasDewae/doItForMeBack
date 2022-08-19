@@ -34,6 +34,7 @@ namespace doItForMeBack.Services.Services
         {
             return _db.Missions.AsQueryable();
         }
+
         public IQueryable<Mission> GetBanMissions()
         {
             return _db.Missions.AsQueryable().Where(m => m.Ban.IsBan == true);
