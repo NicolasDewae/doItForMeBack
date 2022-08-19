@@ -1,5 +1,6 @@
 ﻿using doItForMeBack.Entities;
-using doItForMeBack.Service;
+using doItForMeBack.Services.Interfaces;
+using doItForMeBack.Services.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,8 +40,8 @@ namespace doItForMeBack.Controllers
         /// Permet de récupérer tous les utilisateurs et leurs attributs
         /// </summary>
         /// <returns></returns>
-        [HttpGet("GetUsers")]
-        public IQueryable GetUsers()
+        [HttpGet("GetAllUsers")]
+        public IQueryable GetAllUsers()
         {
             return _userService.GetUsers();
         }
@@ -74,14 +75,37 @@ namespace doItForMeBack.Controllers
             userToUpdate.City = user.City;
             userToUpdate.State = user.State;
             userToUpdate.Birthday = user.Birthday;
-            userToUpdate.Ban = user.Ban;
 
             _userService.UpdateUser(userToUpdate);
 
             return Ok();
         }
-        
 
+        /// <summary>
+        /// Permet de bannir une mission
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        [HttpPut("ChangeBanUserStatus")]
+        public IActionResult ChangeBanUserStatus(User user)
+        {
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            var currentUser = (User)HttpContext.Items["User"];
+            var userToBan = _userService.GetUserById(user.Id);
+
+            userToBan.Ban.BanDate = DateTime.Now;
+            userToBan.Ban.Description = user.Ban.Description;
+            userToBan.Ban.IsBan = user.Ban.IsBan;
+            userToBan.Ban.UserBanId = currentUser.Id;
+
+            _userService.UpdateUser(userToBan);
+
+            return Ok();
+        }
         #endregion
 
         #region delete
