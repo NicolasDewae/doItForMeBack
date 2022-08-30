@@ -1,6 +1,7 @@
 ﻿using doItForMeBack.Entities;
 using doItForMeBack.Services.Interfaces;
 using doItForMeBack.Services.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -26,8 +27,9 @@ namespace doItForMeBack.Controllers
         /// Permet de récupérer les informations concernant les missions de l'utilisateur courant
         /// </summary>
         /// <returns></returns>
+        [Authorize(Roles = "Admin, User")]
         [HttpGet("GetCurrentUserMissions")]
-        public IActionResult CurrentUser()
+        public IActionResult GetCurrentUserMissions()
         {
             var currentUser = (User)HttpContext.Items["User"];
 
@@ -46,6 +48,7 @@ namespace doItForMeBack.Controllers
         /// Permet de récupérer toutes les missions et leurs attributs
         /// </summary>
         /// <returns></returns>
+        [Authorize(Roles = "Admin, User")]
         [HttpGet("GetAllMissions")]
         public IQueryable GetAllMissions()
         {
@@ -57,8 +60,8 @@ namespace doItForMeBack.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin, User")]
         [HttpGet("GetMissionById")]
-
         public IActionResult GetMissionById(int id)
         {
             if (!_missionService.MissionExists(id))
@@ -73,6 +76,7 @@ namespace doItForMeBack.Controllers
         /// Permet de récupérer une mission selon l'id
         /// </summary>
         /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetBanMission")]
 
         public IQueryable GetBanMission()
@@ -87,6 +91,7 @@ namespace doItForMeBack.Controllers
         /// </summary>
         /// <param name="mission"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin, User")]
         [HttpPost("CreateMission")]
         public IActionResult CreateMission([FromBody] Mission mission)
         {
@@ -115,6 +120,7 @@ namespace doItForMeBack.Controllers
         /// </summary>
         /// <param name="mission"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin, User")]
         [HttpPut("UpdateCurrentUserMission")]
         public IActionResult UpdateCurrentUserMission(Mission mission)
         {
@@ -151,22 +157,25 @@ namespace doItForMeBack.Controllers
         /// </summary>
         /// <param name="mission"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpPut("ChangeBanMissionStatus")]
         public IActionResult ChangeBanMissionStatus(Mission mission)
         {
 
             var currentUser = (User)HttpContext.Items["User"];
-            var missionToBan = _missionService.GetMissionById(mission.Id);
             var banToUpdate = _banService.GetBanById(mission.Ban.Id);
 
             if (mission == null)
             {
-                return BadRequest();
+                return BadRequest( new { message = "La mission n'existe pas" });
             }
-            
-            if(banToUpdate.Id != mission.Ban.Id)
+            else if(banToUpdate.Id != mission.Ban.Id)
             {
                 return BadRequest(new { message = "Vous ne pouvez pas bannir cet utilisateur" });
+            }
+            else if (currentUser.Role != "Admin")
+            {
+                return BadRequest(new { message = "Vous n'avez pas le bon rôle" });
             }
 
             banToUpdate.BanDate = DateTime.Now;
@@ -186,6 +195,7 @@ namespace doItForMeBack.Controllers
         /// </summary>
         /// <param name="mission"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin, User")]
         [HttpDelete("DeleteCurrentUserMission")]
         public IActionResult DeleteCurrentUserMission(int missionId)
         {
@@ -214,14 +224,20 @@ namespace doItForMeBack.Controllers
         /// </summary>
         /// <param name="mission"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("DeleteMission")]
         public IActionResult DeleteMission(int missionId)
         {
+            var currentUser = (User)HttpContext.Items["User"];
             var mission = _missionService.GetMissionById(missionId);
             
-            if (mission == null)
+            if (currentUser == null || mission == null)
             {
-                return BadRequest();
+                return BadRequest(new { message = "L'utilisateur ou la mission n'existe pas" });
+            }
+            else if (currentUser.Role != "Admin")
+            {
+                return BadRequest(new { message = "Vous n'avez pas le bon rôle" });
             }
 
             _missionService.DeleteMission(mission);
