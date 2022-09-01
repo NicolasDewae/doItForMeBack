@@ -27,6 +27,9 @@ namespace doItForMeBack.Data
             modelBuilder.Entity<Rate>()
                 .HasOne(r => r.UserRate)
                 .WithMany();
+            modelBuilder.Entity<Ban>()
+                .HasOne(b => b.Banner)
+                .WithMany();
         }
     }
 }
