@@ -44,20 +44,21 @@ namespace doItForMeBack.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPost("Registration")]
-        public IActionResult CreateUser([FromBody] User user)
+        public IActionResult CreateUser([FromBody] RegistrationRequest user)
         {
+            var email = _userService.GetUserByEmail(user.Email);
+            
             if (user == null)
             {
                 return BadRequest(ModelState);
             }
-            if (_userService.UserExists(user.Id))
+            else if (email != null)
             {
-                ModelState.AddModelError("", "User already exist");
-                return StatusCode(500, ModelState);
+                return BadRequest(new { message = "Cet email existe déjà" });
             }
-            if (!_userService.CreateUser(user))
+            else if (!_userService.CreateUser(user))
             {
-                ModelState.AddModelError("", "Something went wrong while saving user");
+                ModelState.AddModelError("", "Une erreur est survenue");
                 return StatusCode(500, ModelState);
             }
             return Ok(user);
