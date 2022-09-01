@@ -73,7 +73,7 @@ namespace doItForMeBack.Controllers
         }
 
         /// <summary>
-        /// Permet de récupérer une mission selon l'id
+        /// Permet de récupérer les missions ayant un status ban à true
         /// </summary>
         /// <returns></returns>
         [Authorize(Roles = "Admin")]
@@ -181,7 +181,7 @@ namespace doItForMeBack.Controllers
             banToUpdate.BanDate = DateTime.Now;
             banToUpdate.Description = mission.Ban.Description;
             banToUpdate.IsBan = mission.Ban.IsBan;
-            banToUpdate.UserBanId = currentUser.Id;
+            banToUpdate.Banner = currentUser;
 
             _banService.UpdateBanMission(banToUpdate);
 
