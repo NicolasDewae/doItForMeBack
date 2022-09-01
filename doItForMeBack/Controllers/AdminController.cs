@@ -1,4 +1,5 @@
 ﻿using doItForMeBack.Entities;
+using doItForMeBack.Models;
 using doItForMeBack.Services.Interfaces;
 using doItForMeBack.Services.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -12,9 +13,11 @@ namespace doItForMeBack.Controllers
     public class AdminController : ControllerBase
     {
         private readonly IUserService _userService;
-        public AdminController(IUserService userService)
+        private readonly IBanService _banService;
+        public AdminController(IUserService userService, IBanService banService)
         {
             _userService = userService;
+            _banService = banService;
         }
 
         #region get
@@ -46,6 +49,17 @@ namespace doItForMeBack.Controllers
             return _userService.GetUsers();
         }
 
+        /// <summary>
+        /// Permet de récupérer les missions ayant un status ban à true
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetBanUsers")]
+
+        public IQueryable GetBanUsers()
+        {
+            return _userService.GetBanUsers();
+        }
+
         #endregion
 
         #region update
@@ -57,26 +71,14 @@ namespace doItForMeBack.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPut("UpdateUser")]
-        public IActionResult UpdateUser(User user)
+        public IActionResult UpdateUser(UserRequest user)
         {
-            var userToUpdate = _userService.GetUserById(user.Id);
-
-            if (user == null || user.Id != userToUpdate.Id)
+            if (user == null)
             {
                 return BadRequest();
             }
 
-            //Seul les données dans cette liste pourrons être changées
-            userToUpdate.Firstname = user.Firstname;
-            userToUpdate.Lastname = user.Lastname;
-            userToUpdate.Email = user.Email;
-            userToUpdate.Adress = user.Adress;
-            userToUpdate.PostCode = user.PostCode;
-            userToUpdate.City = user.City;
-            userToUpdate.State = user.State;
-            userToUpdate.Birthday = user.Birthday;
-
-            _userService.UpdateUser(userToUpdate);
+            _userService.UpdateUser(user);
 
             return Ok();
         }
@@ -84,27 +86,35 @@ namespace doItForMeBack.Controllers
         /// <summary>
         /// Permet de bannir une mission
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="ban"></param>
         /// <returns></returns>
         [HttpPut("ChangeBanUserStatus")]
-        public IActionResult ChangeBanUserStatus(User user)
+        public IActionResult ChangeBanUserStatus(BanRequest ban)
         {
-            if (user == null)
+            var currentAdmin= (User)HttpContext.Items["User"];
+            
+            if (ban == null)
             {
-                return BadRequest();
+                return BadRequest(new { message = "L'utilisateur n'existe pas" });
+            }
+            if(currentAdmin == null)
+            {
+                return BadRequest(new { message = "L'utilisateur courant n'existe pas" });
             }
 
-            var currentUser = (User)HttpContext.Items["User"];
-            var userToBan = _userService.GetUserById(user.Id);
-
-            userToBan.Ban.BanDate = DateTime.Now;
-            userToBan.Ban.Description = user.Ban.Description;
-            userToBan.Ban.IsBan = user.Ban.IsBan;
-            userToBan.Ban.UserBanId = currentUser.Id;
-
-            _userService.UpdateUser(userToBan);
+            try
+            {
+                User user = _userService.GetUserById(ban.WhoIsBannedId);
+                Ban userBanned = _banService.GetBanById(user.BanId);
+                _userService.BanUser(userBanned, ban, currentAdmin);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
 
             return Ok();
+
         }
         #endregion
 
