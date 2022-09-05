@@ -52,7 +52,7 @@ namespace doItForMeBack.Controllers
         {
             var currentUser = (User)HttpContext.Items["User"];
 
-            if (currentUser == null || currentUser.Email != user.Email)
+            if (currentUser == null || currentUser.Id != user.Id)
             {
                 return BadRequest( new { message = "une erreur est survenue" });
             }
