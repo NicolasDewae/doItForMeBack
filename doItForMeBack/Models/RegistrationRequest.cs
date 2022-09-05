@@ -4,6 +4,7 @@ namespace doItForMeBack.Models
 {
     public class RegistrationRequest
     {
+        [Required]
         public string Firstname { get; set; }
         [Required]
         public string Lastname { get; set; }
