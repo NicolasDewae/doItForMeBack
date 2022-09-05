@@ -20,25 +20,32 @@ namespace doItForMeBack.Services.Services
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public bool CreateUser(RegistrationRequest model)
+        public bool CreateUser(RegistrationRequest userRequest)
         {
-            var user = new User();
+            userRequest.Password = BCrypt.Net.BCrypt.HashPassword(userRequest.Password);
+
+            // Instanciation de User
+            User user = new();
+            user.Ban = new Ban();
+
+            // Instanciation de Ban + set à false
+            Ban ban = new Ban();
+            ban.IsBan = false;
             
-            user.Firstname = model.Firstname;
-            user.Lastname = model.Lastname;
-            user.Email = model.Email;
-            user.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
-            user.Role = model.Role;
-            user.Adress = model.Adress;
-            user.PostCode = model.PostCode;
-            user.City = model.City;
-            user.State = model.State;
-            user.Birthday = model.Birthday;
-            user.PhoneNumber = model.PhoneNumber;
-            user.Picture = model.Picture;
-            user.Ban.IsBan = false;
+            // Enregistrement des données de userRequest dans new user
+            user.Firstname = userRequest.Firstname;
+            user.Lastname = userRequest.Lastname;
+            user.Email = userRequest.Email;
+            user.Password = userRequest.Password;
+            user.Role = userRequest.Role;
+            user.Adress = userRequest.Adress;
+            user.PostCode = userRequest.PostCode;
+            user.City = userRequest.City;
+            user.State = userRequest.State;
+            user.Birthday = userRequest.Birthday;
+            user.Ban.IsBan = ban.IsBan;
 
-
+            // Ajout du nouvel utilisateur en BDD
             _db.Users.Add(user);
             return Save();
         }
@@ -61,13 +68,13 @@ namespace doItForMeBack.Services.Services
         }
 
         /// <summary>
-        /// Supprimer un utilisateur
+        /// Modifier un utilisateur
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         public bool UpdateUser(UserRequest model)
         {
-            var user = this.GetUserByEmail(model.Email);
+            var user = this.GetUserById(model.Id);
 
             //Seul les données dans cette liste pourrons être changées
             user.Firstname = model.Firstname;
@@ -80,6 +87,7 @@ namespace doItForMeBack.Services.Services
             user.Birthday = model.Birthday;
 
             _db.Users.Update(user);
+
             return Save();
         }
 
