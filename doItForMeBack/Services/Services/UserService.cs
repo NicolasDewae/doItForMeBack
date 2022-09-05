@@ -2,7 +2,7 @@
 using doItForMeBack.Entities;
 using doItForMeBack.Models;
 using doItForMeBack.Services.Interfaces;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace doItForMeBack.Services.Services
 {
@@ -117,7 +117,9 @@ namespace doItForMeBack.Services.Services
         /// <returns></returns>
         public IQueryable<User> GetUsers()
         {
-            return _db.Users.AsQueryable();
+            return _db.Users
+                .Include(navigationPropertyPath: b => b.Ban)
+                .AsQueryable();
         }
 
         /// <summary>
@@ -127,7 +129,9 @@ namespace doItForMeBack.Services.Services
         /// <returns></returns>
         public User GetUserById(int id)
         {
-            return _db.Users.FirstOrDefault(x => x.Id == id);
+            return _db.Users
+                .Include(navigationPropertyPath: b => b.Ban)
+                .FirstOrDefault(x => x.Id == id);
         }
 
         /// <summary>
@@ -137,7 +141,9 @@ namespace doItForMeBack.Services.Services
         /// <returns></returns>
         public User GetUserByEmail(string email)
         {
-            return _db.Users.FirstOrDefault(x => x.Email == email);
+            return _db.Users
+                .Include(navigationPropertyPath: b => b.Ban)
+                .FirstOrDefault(x => x.Email == email);
         }
 
         /// <summary>
@@ -146,7 +152,10 @@ namespace doItForMeBack.Services.Services
         /// <returns></returns>
         public IQueryable<User> GetBanUsers()
         {
-            return _db.Users.AsQueryable().Where(u => u.Ban.IsBan == true);
+            return _db.Users
+                .Include(navigationPropertyPath: b => b.Ban)
+                .AsQueryable()
+                .Where(u => u.Ban.IsBan == true);
         }
 
         /// <summary>
