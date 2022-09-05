@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace doItForMeBack.Entities
 {
@@ -12,7 +13,9 @@ namespace doItForMeBack.Entities
         public User? Maker { get; set; } 
         public string? Picture { get; set; }
         public List<Report>? Report { get; set; }
-        public Ban? Ban { get; set; }
+        [ForeignKey("BanId")]
+        [Required]
+        public Ban Ban { get; set; }
         [Required]
         public float Price { get; set; }
         [Required]

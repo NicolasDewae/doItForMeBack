@@ -1,6 +1,7 @@
 ﻿using doItForMeBack.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using System.Diagnostics;
 
 namespace doItForMeBack.Data
 {
@@ -27,6 +28,13 @@ namespace doItForMeBack.Data
             modelBuilder.Entity<Rate>()
                 .HasOne(r => r.UserRate)
                 .WithMany();
+            modelBuilder.Entity<Ban>()
+                .HasOne(b => b.Banner)
+                .WithMany();
+            modelBuilder.Entity<User>()
+                .HasOne<Ban>(b => b.Ban)
+                .WithOne();
+                
         }
     }
 }

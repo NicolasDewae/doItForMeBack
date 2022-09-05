@@ -1,13 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
-namespace doItForMeBack.Entities
+namespace doItForMeBack.Models
 {
-    public class User
+    public class UserRequest
     {
-        #region Properties
-        [Key]
+        [Required]
         public int Id { get; set; }
         [Required]
         public string Firstname { get; set; }
@@ -15,8 +12,6 @@ namespace doItForMeBack.Entities
         public string Lastname { get; set; }
         [Required]
         public string Email { get; set; }
-        [Required]
-        public string Password { get; set; }
         [Required]
         public string Role { get; set; }
         [Required]
@@ -31,12 +26,5 @@ namespace doItForMeBack.Entities
         public DateTime Birthday { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Picture { get; set; }
-        public List<Rate>? Rate { get; set; }
-
-        [ForeignKey("BanId")]
-        [Required]
-        public Ban Ban { get; set; }
-        public List<Mission>? Mission { get; set; }
-        #endregion
     }
 }

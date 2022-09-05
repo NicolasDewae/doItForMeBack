@@ -48,26 +48,20 @@ namespace doItForMeBack.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPut("UpdateCurrentUser")]
-        public IActionResult UpdateCurrentUser(User user)
+        public IActionResult UpdateCurrentUser(UserRequest user)
         {
             var currentUser = (User)HttpContext.Items["User"];
 
-            if (currentUser == null || currentUser.Id != user.Id)
+            if (currentUser == null)
             {
-                return BadRequest();
+                return BadRequest( new { message = "une erreur est survenue." });
+            }
+            else if (currentUser.Id != user.Id)
+            {
+                return BadRequest(new { message = "Vous n'êtes pas autorisé à effectuer cette modification" });
             }
 
-            //Seul les données dans cette liste pourrons être changées
-            currentUser.Firstname = user.Firstname;
-            currentUser.Lastname = user.Lastname;
-            currentUser.Email = user.Email;
-            currentUser.Adress = user.Adress;
-            currentUser.PostCode = user.PostCode;
-            currentUser.City = user.City;
-            currentUser.State = user.State;
-            currentUser.Birthday = user.Birthday;
-
-            _userService.UpdateUser(currentUser);
+            _userService.UpdateUser(user);
 
             return Ok();
         }
@@ -77,16 +71,32 @@ namespace doItForMeBack.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPut("UpdatePassword")]
-        public IActionResult UpdatePassword(string oldPassword, string newPassword, string confirmNewPassword)
+        public IActionResult UpdatePassword(ChangePasswordRequest model)
         {
+            var oldPassword = model.OldPassword;
+            var newPassword = model.NewPassword;
+            var confirmNewPassword = model.ConfirmNewPassword;
+
             var currentUser = (User)HttpContext.Items["User"];
 
-            if(currentUser == null || !BCrypt.Net.BCrypt.Verify(oldPassword, currentUser.Password) || newPassword == null || newPassword != confirmNewPassword)
+            if(currentUser == null)
             {
-                return BadRequest();
+                return BadRequest(new { message = "une erreur est survenue." });
+            }
+            else if (newPassword != confirmNewPassword)
+            {
+                return BadRequest(new { message = "Votre nouveau mot de passe et sa confirmation ne sont pas identiques" });
+            }
+            else if (oldPassword == null || newPassword == null || confirmNewPassword == null)
+            {
+                return BadRequest(new { message = "Vous devez remplir tous les champs" });
+            }
+            else if (!BCrypt.Net.BCrypt.Verify(oldPassword, currentUser.Password))
+            {
+                return BadRequest(new { message = "Mot de passe incorrect" });
             }
 
-            _userService.UpdatePassword(currentUser.Id, oldPassword, newPassword);
+            _userService.UpdatePassword(currentUser.Id, newPassword);
 
             return Ok(new { message = "Votre mot de passe a été changé" });
         }
