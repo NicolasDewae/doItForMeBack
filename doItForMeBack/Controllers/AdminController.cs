@@ -92,7 +92,12 @@ namespace doItForMeBack.Controllers
         public IActionResult ChangeBanUserStatus(BanRequest ban)
         {
             var currentAdmin= (User)HttpContext.Items["User"];
-            
+
+            User user = new();
+            user.Ban = new Ban();
+
+            Ban userBanned = new();
+
             if (ban == null)
             {
                 return BadRequest(new { message = "L'utilisateur n'existe pas" });
@@ -104,8 +109,8 @@ namespace doItForMeBack.Controllers
 
             try
             {
-                User user = _userService.GetUserById(ban.WhoIsBannedId);
-                Ban userBanned = _banService.GetBanById(user.BanId);
+                user = _userService.GetUserById(ban.WhoIsBannedId);
+                userBanned = _banService.GetBanById(user.Ban.Id);
                 _userService.BanUser(userBanned, ban, currentAdmin);
             }
             catch (Exception e)
