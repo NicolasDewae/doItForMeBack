@@ -4,6 +4,9 @@ namespace doItForMeBack.Models
 {
     public class UserRequest
     {
+        [Required]
+        public int Id { get; set; }
+        [Required]
         public string Firstname { get; set; }
         [Required]
         public string Lastname { get; set; }
