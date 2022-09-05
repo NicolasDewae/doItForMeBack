@@ -161,9 +161,11 @@ namespace doItForMeBack.Controllers
         [HttpPut("ChangeBanMissionStatus")]
         public IActionResult ChangeBanMissionStatus(Mission mission)
         {
+            Ban banToUpdate = new();
+            User currentUser = new();
 
-            var currentUser = (User)HttpContext.Items["User"];
-            var banToUpdate = _banService.GetBanById(mission.Ban.Id);
+            currentUser = (User)HttpContext.Items["User"];
+            banToUpdate = _banService.GetBanById(mission.Ban.Id);
 
             if (mission == null)
             {
@@ -211,7 +213,7 @@ namespace doItForMeBack.Controllers
 
             if (myMission.Any(m => m.ClaimantId != missionToDelete.ClaimantId))
             {
-                return BadRequest(new { message = "Vous n'êtes pas autorisé à changer cette mission" });
+                return BadRequest(new { message = "Vous n'êtes pas autorisé à supprimer cette mission" });
             }
 
             _missionService.DeleteMission(missionToDelete);
@@ -242,7 +244,7 @@ namespace doItForMeBack.Controllers
 
             _missionService.DeleteMission(mission);
 
-            return Ok();
+            return Ok(new { message = "La mission a été supprimée" });
         }
         #endregion
     }
