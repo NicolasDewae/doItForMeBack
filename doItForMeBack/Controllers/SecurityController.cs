@@ -47,20 +47,17 @@ namespace doItForMeBack.Controllers
         public IActionResult CreateUser([FromBody] RegistrationRequest user)
         {
             var email = _userService.GetUserByEmail(user.Email);
-            
             if (user == null)
             {
                 return BadRequest(ModelState);
             }
             else if (email != null)
             {
-                return BadRequest(new { message = "Cet email existe déjà" });
+                return BadRequest(new { message = "l'adresse email existe déjà" });
             }
-            else if (!_userService.CreateUser(user))
-            {
-                ModelState.AddModelError("", "Une erreur est survenue");
-                return StatusCode(500, ModelState);
-            }
+
+            _userService.CreateUser(user);
+
             return Ok(user);
         }
 
