@@ -52,9 +52,13 @@ namespace doItForMeBack.Controllers
         {
             var currentUser = (User)HttpContext.Items["User"];
 
-            if (currentUser == null || currentUser.Id != user.Id)
+            if (currentUser == null)
             {
-                return BadRequest( new { message = "une erreur est survenue" });
+                return BadRequest( new { message = "une erreur est survenue." });
+            }
+            else if (currentUser.Id != user.Id)
+            {
+                return BadRequest(new { message = "Vous n'êtes pas autorisé à effectuer cette modification" });
             }
 
             _userService.UpdateUser(user);
@@ -75,9 +79,21 @@ namespace doItForMeBack.Controllers
 
             var currentUser = (User)HttpContext.Items["User"];
 
-            if(currentUser == null || !BCrypt.Net.BCrypt.Verify(oldPassword, currentUser.Password) || newPassword == null || newPassword != confirmNewPassword)
+            if(currentUser == null)
             {
-                return BadRequest();
+                return BadRequest(new { message = "une erreur est survenue." });
+            }
+            else if (newPassword != confirmNewPassword)
+            {
+                return BadRequest(new { message = "Votre nouveau mot de passe et sa confirmation ne sont pas identiques" });
+            }
+            else if (oldPassword == null || newPassword == null || confirmNewPassword == null)
+            {
+                return BadRequest(new { message = "Vous devez remplir tous les champs" });
+            }
+            else if (!BCrypt.Net.BCrypt.Verify(oldPassword, currentUser.Password))
+            {
+                return BadRequest(new { message = "Mot de passe incorrect" });
             }
 
             _userService.UpdatePassword(currentUser.Id, newPassword);
