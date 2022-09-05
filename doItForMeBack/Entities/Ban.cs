@@ -9,12 +9,10 @@ namespace doItForMeBack.Entities
         [Key]
         public int Id { get; set; }
 
-        [ForeignKey("Banner")]
-        public int? BannerId { get; set; }
+        [ForeignKey("BannerId")]
         public User? Banner { get; set; }
 
-        [ForeignKey("WhoIsBanned")]
-        public int? WhoIsBannedId { get; set; }
+        [ForeignKey("WhoIsBannedId")]
         public User? WhoIsBanned { get; set; }
         
         public DateTime? BanDate { get; set; }

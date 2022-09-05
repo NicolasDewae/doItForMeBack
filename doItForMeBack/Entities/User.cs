@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace doItForMeBack.Entities
 {
@@ -30,13 +31,11 @@ namespace doItForMeBack.Entities
         public DateTime Birthday { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Picture { get; set; }
-
         public List<Rate>? Rate { get; set; }
 
-        [ForeignKey("Ban")]
-        public int BanId { get; set; }
-        public Ban? Ban { get; set; }
-
+        [ForeignKey("BanId")]
+        [Required]
+        public Ban Ban { get; set; }
         public List<Mission>? Mission { get; set; }
         #endregion
     }
