@@ -102,6 +102,7 @@ namespace doItForMeBack.Services.Services
         {                
             
             userBanned.Banner = adminBanner;
+            userBanned.WhoIsBanned.Id = ban.WhoIsBannedId;
             userBanned.BanDate = DateTime.Now;
             userBanned.Description = ban.Description;
             userBanned.IsBan = ban.IsBan;
