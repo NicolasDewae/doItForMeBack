@@ -35,7 +35,7 @@ namespace doItForMeBack.Controllers
             {
                 return BadRequest(new { message = "L'utilisateur n'existe pas" });
             }
-
+            
             return Ok(_userService.GetUserById(id));
         }
 
