@@ -1,12 +1,8 @@
 ﻿using doItForMeBack.Entities;
 using doItForMeBack.Models;
 using doItForMeBack.Services.Interfaces;
-using doItForMeBack.Services.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace doItForMeBack.Controllers
 {
@@ -181,7 +177,7 @@ namespace doItForMeBack.Controllers
         /// <returns></returns>
         [Authorize(Roles = "Admin, User")]
         [HttpPut("UpdateCurrentUserMission")]
-        public IActionResult UpdateCurrentUserMission(Mission mission)
+        public IActionResult UpdateCurrentUserMission(MissionRequest mission)
         {
             var currentUser = (User)HttpContext.Items["User"];
             var missionToUpdate = _missionService.GetMissionById(mission.Id);
@@ -189,11 +185,8 @@ namespace doItForMeBack.Controllers
             if (currentUser == null || missionToUpdate == null)
             {
                 return BadRequest(new { message = "L'utilisateur ou la mission n'existe pas" });
-            }
-            
-            var myMission = _missionService.GetMissions().Where(m => m.Claimant.Id == currentUser.Id);
-
-            if(myMission.Any(m => m.Claimant.Id != mission.Claimant.Id))
+            }            
+            else if(missionToUpdate.Claimant.Id != currentUser.Id)
             {
                 return BadRequest(new { message = "Vous n'êtes pas autorisé à changer cette mission" });
             }
@@ -313,7 +306,7 @@ namespace doItForMeBack.Controllers
                 }
 
                 // Si la collection est vide, on change le "Status"
-                if (!makerList.Any())
+                if (makerList.Any() == false)
                 {
                     missionToUpdate.Status = "Nobody";
                 }
