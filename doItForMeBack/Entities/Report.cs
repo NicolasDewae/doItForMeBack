@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace doItForMeBack.Entities
 {
@@ -7,9 +8,12 @@ namespace doItForMeBack.Entities
         #region Properties
         [Key]
         public int Id { get; set; }
-        public int ClaimantId { get; set; }
-        public int? UserId { get; set; }
-        public int? MissionId { get; set; }
+        [ForeignKey(name: "ClaimantId")]
+        public User Claimant { get; set; }
+        [ForeignKey(name: "UserId")]
+        public User? User { get; set; }
+        [ForeignKey(name: "MissionsId")]
+        public Mission? Mission { get; set; }
         public string Description { get; set; }
         public string? Picture { get; set; }
         public string Subject { get; set; }

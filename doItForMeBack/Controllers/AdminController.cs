@@ -35,7 +35,7 @@ namespace doItForMeBack.Controllers
             {
                 return BadRequest(new { message = "L'utilisateur n'existe pas" });
             }
-
+            
             return Ok(_userService.GetUserById(id));
         }
 
@@ -62,7 +62,7 @@ namespace doItForMeBack.Controllers
 
         #endregion
 
-        #region update
+        #region put
 
         /// <summary>
         /// Modifier les coordonnées de n'importe quel utilisateur.

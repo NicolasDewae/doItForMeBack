@@ -34,6 +34,11 @@ namespace doItForMeBack.Data
             modelBuilder.Entity<User>()
                 .HasOne<Ban>(b => b.Ban)
                 .WithOne();
+            modelBuilder.Entity<Mission>()
+                .HasOne(u => u.Claimant)
+                .WithMany();
+            modelBuilder.Entity<Mission>()
+                .HasMany(u => u.Maker);
                 
         }
     }

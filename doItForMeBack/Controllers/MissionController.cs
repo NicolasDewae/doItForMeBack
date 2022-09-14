@@ -1,10 +1,8 @@
 ﻿using doItForMeBack.Entities;
+using doItForMeBack.Models;
 using doItForMeBack.Services.Interfaces;
-using doItForMeBack.Services.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace doItForMeBack.Controllers
 {
@@ -37,11 +35,55 @@ namespace doItForMeBack.Controllers
             {
                 return BadRequest();
             }
-            var currentUserId = currentUser.Id;
 
-            var missions = _missionService.GetMissions().Where(m => m.ClaimantId == currentUserId);
+            var missions = _missionService.GetMissions().Where(m => m.Claimant.Id == currentUser.Id);
 
-            return Ok(missions);
+            var list = missions.Select(m => new Mission()
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Description = m.Description,
+                MissionDate = m.MissionDate,
+                Picture = m.Picture,
+                Price = m.Price,
+                Claimant = m.Claimant,
+                Status = m.Status,
+                Maker = m.Maker,
+            });
+
+            return Ok(list);
+        }
+
+        /// <summary>
+        /// Permet de récupérer les missions de l'utilisateur courant qui on un missionStatus à "Pending"
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin, User")]
+        [HttpGet("GetCurrentMissionsPending")]
+        public IActionResult GetCurrentMissionsPending()
+        {
+            var currentUser = (User)HttpContext.Items["User"];
+
+            if (currentUser == null)
+            {
+                return BadRequest();
+            }
+
+            var missions = _missionService.GetMissions()
+                .Where(m => ( m.Claimant.Id == currentUser.Id) && (m.Status == "Pending"));
+
+            var list = missions.Select(m => new Mission()
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Description = m.Description,
+                MissionDate = m.MissionDate,
+                Price = m.Price,
+                Claimant = m.Claimant,
+                Maker = m.Maker,
+            });
+
+            return Ok(list);
         }
 
         /// <summary>
@@ -50,9 +92,21 @@ namespace doItForMeBack.Controllers
         /// <returns></returns>
         [Authorize(Roles = "Admin, User")]
         [HttpGet("GetAllMissions")]
-        public IQueryable GetAllMissions()
+        public IActionResult GetAllMissions()
         {
-            return _missionService.GetMissions();
+            var missions = _missionService.GetMissions();
+
+            var list = missions.Select(m => new Mission()
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Description = m.Description,
+                MissionDate = m.MissionDate,
+                Price = m.Price,
+                Claimant = m.Claimant
+            });
+
+            return Ok(list);
         }
 
         /// <summary>
@@ -69,19 +123,26 @@ namespace doItForMeBack.Controllers
                 return BadRequest(new { message = "La mission n'existe pas" });
             }
 
-            return Ok(_missionService.GetMissionById(id));
-        }
+            var mission = _missionService.GetMissionById(id);
 
-        /// <summary>
-        /// Permet de récupérer les missions ayant un status ban à true
-        /// </summary>
-        /// <returns></returns>
-        [Authorize(Roles = "Admin")]
-        [HttpGet("GetBanMission")]
+            Mission list = new();
 
-        public IQueryable GetBanMission()
-        {
-            return _missionService.GetBanMissions();
+            list.Id = mission.Id;
+            list.Title = mission.Title;
+            list.Description = mission.Description;
+            list.MissionDate = mission.MissionDate;
+            list.Price = mission.Price;
+
+
+            list.Claimant = new User();
+
+            list.Claimant.Id = mission.Claimant.Id;
+            list.Claimant.Firstname = mission.Claimant.Firstname;
+            list.Claimant.Lastname = mission.Claimant.Lastname;
+            list.Claimant.Birthday = mission.Claimant.Birthday;
+            list.Claimant.Rate = mission.Claimant.Rate;
+
+            return Ok(list);
         }
         #endregion
 
@@ -93,28 +154,22 @@ namespace doItForMeBack.Controllers
         /// <returns></returns>
         [Authorize(Roles = "Admin, User")]
         [HttpPost("CreateMission")]
-        public IActionResult CreateMission([FromBody] Mission mission)
+        public IActionResult CreateMission([FromBody] MissionRequest mission)
         {
+            var currentUser = (User)HttpContext.Items["User"];
+
             if (mission == null)
             {
                 return BadRequest(ModelState);
             }
-            if (_missionService.MissionExists(mission.Id))
-            {
-                ModelState.AddModelError("", "Mission already exist");
-                return StatusCode(500, ModelState);
-            }
-            if (!_missionService.CreateMission(mission))
-            {
-                ModelState.AddModelError("", "Something went wrong while saving mission");
-                return StatusCode(500, ModelState);
-            }
+
+            _missionService.CreateMission(mission, currentUser);
 
             return Ok(mission);
         }
         #endregion
 
-        #region update
+        #region put
         /// <summary>
         /// Permet de modifier une mission qui appartient à l'utilisateur courant
         /// </summary>
@@ -122,7 +177,7 @@ namespace doItForMeBack.Controllers
         /// <returns></returns>
         [Authorize(Roles = "Admin, User")]
         [HttpPut("UpdateCurrentUserMission")]
-        public IActionResult UpdateCurrentUserMission(Mission mission)
+        public IActionResult UpdateCurrentUserMission(MissionRequest mission)
         {
             var currentUser = (User)HttpContext.Items["User"];
             var missionToUpdate = _missionService.GetMissionById(mission.Id);
@@ -130,11 +185,8 @@ namespace doItForMeBack.Controllers
             if (currentUser == null || missionToUpdate == null)
             {
                 return BadRequest(new { message = "L'utilisateur ou la mission n'existe pas" });
-            }
-            
-            var myMission = _missionService.GetMissions().Where(m => m.ClaimantId == currentUser.Id);
-
-            if(myMission.Any(m => m.ClaimantId != mission.ClaimantId))
+            }            
+            else if(missionToUpdate.Claimant.Id != currentUser.Id)
             {
                 return BadRequest(new { message = "Vous n'êtes pas autorisé à changer cette mission" });
             }
@@ -153,40 +205,114 @@ namespace doItForMeBack.Controllers
         }
 
         /// <summary>
-        /// Permet de bannir une mission
+        /// Demander au "Claimant" pour effectuer la mission
         /// </summary>
         /// <param name="mission"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin")]
-        [HttpPut("ChangeBanMissionStatus")]
-        public IActionResult ChangeBanMissionStatus(Mission mission)
+        [Authorize(Roles = "Admin, User")]
+        [HttpPut("AskToDoMission")]
+        public IActionResult AskToDoMission(int missionId)
         {
-            Ban banToUpdate = new();
             User currentUser = new();
-
             currentUser = (User)HttpContext.Items["User"];
-            banToUpdate = _banService.GetBanById(mission.Ban.Id);
 
-            if (mission == null)
+            Mission missionToUpdate = new();
+            missionToUpdate = _missionService.GetMissionById(missionId);
+
+            if (currentUser == null || missionToUpdate == null)
             {
-                return BadRequest( new { message = "La mission n'existe pas" });
+                return BadRequest(new { message = "L'utilisateur ou la mission n'existe pas" });
             }
-            else if(banToUpdate.Id != mission.Ban.Id)
+            else if (missionToUpdate.Status == "Accepted")
             {
-                return BadRequest(new { message = "Vous ne pouvez pas bannir cet utilisateur" });
-            }
-            else if (currentUser.Role != "Admin")
-            {
-                return BadRequest(new { message = "Vous n'avez pas le bon rôle" });
+                return BadRequest(new { message = "Un autre DoIteur à déjà été choisi pour effectuer cette mission" });
             }
 
-            banToUpdate.BanDate = DateTime.Now;
-            banToUpdate.Description = mission.Ban.Description;
-            banToUpdate.IsBan = mission.Ban.IsBan;
-            banToUpdate.Banner = currentUser;
+            missionToUpdate.Status = "Pending";
 
-            _banService.UpdateBanMission(banToUpdate);
+            // Ajoute le Maker s'il n'est pas déjà dans la liste
+            if (!missionToUpdate.Maker.Contains(currentUser)){
+                missionToUpdate.Maker.Add(currentUser );
+            };
 
+            _missionService.UpdateMission(missionToUpdate);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Accepter ou non un utilisateur à effectuer sa mission
+        /// </summary>
+        /// <param name="missionId"></param>
+        /// <param name="makerId"></param>
+        /// <param name="accept"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin, User")]
+        [HttpPut("AcceptMaker")]
+        public IActionResult AcceptMaker(int missionId, int makerId, bool accept)
+        {
+            // Récupération du currentUser
+            User currentUser = new();
+            currentUser = (User)HttpContext.Items["User"];
+
+            // Récupération de la mission
+            Mission missionToUpdate = new();
+            missionToUpdate.Maker = new List<User>();
+            missionToUpdate = _missionService.GetMissionById(missionId);
+
+            // On vérifie que tout est ok avant de faire les modifications
+            if (currentUser == null)
+            {
+                return BadRequest(new { message = "L'utilisateur n'existe pas" });
+            }
+            else if (missionToUpdate == null)
+            {
+                return BadRequest(new { message = "la mission n'existe pas" });
+            }
+            else if (missionToUpdate.Status != "Pending")
+            {
+                return BadRequest(new { message = "La mission n'a pas le bon status " + missionToUpdate.Status });
+            }
+
+            // On change missionToUpdate.MissionStatus en fonction du bouléen
+            if (accept == true)
+            {
+                // On récupère les utilisateurs présent dans la liste "Maker"
+                var makerList = missionToUpdate.Maker;
+
+                // Suppression de tous les utilisateurs présent dans la liste, sauf le "Maker"
+                foreach (User user in makerList.ToList())
+                {
+                    if (makerId != user.Id)
+                    {
+                        makerList.Remove(user);
+                    }
+                }
+
+                missionToUpdate.Status = "Accepted";
+                
+            }
+            else if (accept == false)
+            {
+                var makerList = missionToUpdate.Maker;
+
+                // Suppression de l'utilisateur
+                foreach (User user in makerList.ToList())
+                {
+                    if (makerId == user.Id)
+                    {
+                        makerList.Remove(user);
+                    }
+                }
+
+                // Si la collection est vide, on change le "Status"
+                if (makerList.Any() == false)
+                {
+                    missionToUpdate.Status = "Nobody";
+                }
+            }
+
+            _missionService.UpdateMission(missionToUpdate);
             return Ok();
         }
         #endregion
@@ -209,9 +335,9 @@ namespace doItForMeBack.Controllers
                 return BadRequest(new { message = "l'utilisateur ou la mission n'existe pas" });
             }
 
-            var myMission = _missionService.GetMissions().Where(m => m.ClaimantId == currentUser.Id);
+            var myMission = _missionService.GetMissions().Where(m => m.Claimant.Id == currentUser.Id);
 
-            if (myMission.Any(m => m.ClaimantId != missionToDelete.ClaimantId))
+            if (myMission.Any(m => m.Claimant.Id != missionToDelete.Claimant.Id))
             {
                 return BadRequest(new { message = "Vous n'êtes pas autorisé à supprimer cette mission" });
             }

@@ -9,13 +9,14 @@ namespace doItForMeBack.Entities
         [Key]
         public int Id { get; set; }
         [Required]
-        public int ClaimantId { get; set; }
-        public User? Maker { get; set; } 
+        [ForeignKey("ClaimantId")]
+        public User Claimant { get; set; }
+        [ForeignKey("StatusId")]
+        public string Status { get; set; }
+        //public enum Status { Nobody, Pending, Accepted }
+        public List<User>? Maker { get; set; }
         public string? Picture { get; set; }
         public List<Report>? Report { get; set; }
-        [ForeignKey("BanId")]
-        [Required]
-        public Ban Ban { get; set; }
         [Required]
         public float Price { get; set; }
         [Required]
