@@ -69,6 +69,7 @@ namespace doItForMeBack.Controllers
         /// <summary>
         /// Vérifie si l'ancien mot de passe est correct, si le nouveau mot de passe est saisi et si oui, il appelle le service UpdatePassword
         /// </summary>
+        /// <param name="model"></param>
         /// <returns></returns>
         [HttpPut("UpdatePassword")]
         public IActionResult UpdatePassword(ChangePasswordRequest model)
