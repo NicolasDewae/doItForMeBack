@@ -49,6 +49,7 @@ namespace doItForMeBack.Controllers
                 Claimant = m.Claimant,
                 Status = m.Status,
                 Maker = m.Maker,
+                Tag = m.Tag
             });
 
             return Ok(list);
@@ -81,6 +82,8 @@ namespace doItForMeBack.Controllers
                 Price = m.Price,
                 Claimant = m.Claimant,
                 Maker = m.Maker,
+                Picture = m.Picture,
+                Tag = m.Tag
             });
 
             return Ok(list);
@@ -103,7 +106,9 @@ namespace doItForMeBack.Controllers
                 Description = m.Description,
                 MissionDate = m.MissionDate,
                 Price = m.Price,
-                Claimant = m.Claimant
+                Claimant = m.Claimant,
+                Picture = m.Picture,
+                Tag = m.Tag
             });
 
             return Ok(list);
@@ -132,6 +137,8 @@ namespace doItForMeBack.Controllers
             list.Description = mission.Description;
             list.MissionDate = mission.MissionDate;
             list.Price = mission.Price;
+            list.Picture = mission.Picture;
+            list.Tag = mission.Tag;
 
 
             list.Claimant = new User();
