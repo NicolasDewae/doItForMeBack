@@ -1,6 +1,6 @@
 # doItForMeBack
 ## Etapes pour installation:
-### Paramétrez la chaine de connection
+### Paramétrer la chaine de connection
 Dans MySQL, créez une base de données nommée DoItForMeDatabase. <br>
 Au sein du projet, allez dans appsettings.json et personnalisez la phrase de "ConnectionStrings" avec votre propre user et password 
 
