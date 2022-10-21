@@ -33,24 +33,39 @@ Executez la migration pour créer ou mettre à jour le schéma de la base de don
 dotnet ef update database
 ```
 
-### Créer votre premier utilisateur
-Lancer le projet.<br>
-Dans swagger utilisez la méthode "Registration" située dans la section Security pour créer un admin. Renseignez les champs obligatoires et dans rôle, notez bien "Admin" commençant par une majuscule. Ci-dessous le json avec les informations minimales à renseigner:
+### Démarrer avec Swagger
+L'API possède 2 rôles, "User" et "Admin". Le premier donne accès à certaines méthodes et le second à l'ensemble de celles-ci. Si vous n'êtes pas connecté, vous n'aurez accès à aucune d'entre elles. Donc dans un premier temps il faut créer un administrateur et se connecter avec lui.
+
+#### Créer un administrateur
+Lancez le projet.<br>
+Utilisez la méthode "Registration" située dans la section Security pour créer un admin. 
+
+![Capture d'écran de la méthode "registration"](./doItForMeBack/Assets/Images/Registration.PNG)
+
+Cliquez sur "Try it out" et complétez le fichier JSON. Dans rôle, notez bien "Admin" commençant par une majuscule. Ensuite cliquez sur "Execute"
 
 ```json
 {
-  "firstname": "string",
-  "lastname": "string",
-  "email": "string",
-  "password": "string",
   "role": "Admin",
-  "adress": "string",
-  "postCode": "string",
-  "city": "string",
-  "state": "string",
-  "birthday": "2022-01-01"
 }
 ```
+
+Si vous souhaitez simplement créer un utilisateur, notez "User".
+
+#### Se connecter
+A présent, il faut se connecter avec l'admin nouvellement créé. En suivant le même principe, utilisez la méthode "Login" située dans la section Security et renseignez votre email et votre mot de passe puis cliquez sur "Execute.
+
+![Capture d'écran de la méthode "login"](./doItForMeBack/Assets/Images/Login.PNG)
+
+En réponse, si vos identifiants sont correctes, vous recevrez un JSON contenant quelques informations sur vous, mais surtout le jeton JWT (Json Web Token). Copiez le ! 
+
+![Capture d'écran de la réponse à la méthode "login"](./doItForMeBack/Assets/Images/LoginResponse.PNG)
+
+Remontez tout en haut de la page pour trouver le bouton "Authorize", cliquez dessus et dans l'input de la pop up qui est apparu, notez "Bearer" faite un espace et collez votre Token. Confirmez et quittez la pop up.
+
+![Capture d'écran de la connexion](./doItForMeBack/Assets/Images/Connection.PNG)
+
+C'est bon vous êtes prêt à essayer l'API.
 
 Ressources:
 
